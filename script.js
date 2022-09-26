@@ -1,111 +1,79 @@
+import Book from './modules/bookClass.js';
+import Methods from './modules/methods.js';
 /* eslint-disable max-classes-per-file */
 /* eslint-disable class-methods-use-this */
 
 const form = document.querySelector('#form');
 const ul = document.querySelector('#book-list');
+const bookSection = document.querySelector('#bookSection');
+const heading = document.querySelector('.page-title');
+const dateTime = document.querySelector('#time');
 
-//Getting sections of The HTML
+// Getting sections of The HTML
 const contactSection = document.querySelector('#contact');
 const contactLink = document.querySelector('#contact-link');
 const list = document.querySelector('#list');
 const addNew = document.querySelector('#add');
 
-//remove the other sections when list link is clicked
+// remove the other sections when list link is clicked
 list.addEventListener('click', () => {
-  form.classList.add('display-section');
-  contactSection.classList.add('display-section');
-
-  
-});
-
-//remove other sections when add new is clicked
-addNew.addEventListener('click', () => {
-  ul.classList.add('display-section');
-  contactSection.classList.add('display-section');
-});
-
-//remove other sections when contact is clicked
-contactLink.addEventListener('click', () => {
-  ul.classList.add('display-section');
-  form.classList.add('display-section');
-});
-
-// Define Book Class
-class Book {
-  constructor(title, author, id) {
-    this.title = title;
-    this.author = author;
-    this.id = id;
+  // remove form section
+  if (!form.classList.contains('remove-section')) {
+    form.classList.add('remove-section');
   }
-}
 
-// Define Methods Class
-class Methods {
- // create books array to hold all books created
- static books = [];
+  // remove contact section
+  if (!contactSection.classList.contains('remove-section')) {
+    contactSection.classList.add('remove-section');
+  }
 
- // get all books from the localStorage
- static getAllBooks() {
-   // check if localStorage is not empty
-   if (localStorage.getItem('books')) {
-     this.books = JSON.parse(localStorage.getItem('books'));
-     this.displayBooks();
-   } else {
-     ul.style.display = 'none';
-   }
- }
+  // add list section
+  if (bookSection.classList.contains('remove-section')) {
+    bookSection.classList.remove('remove-section');
+  }
 
- // display books to the browser
- static displayBooks() {
-   this.books.forEach((book) => {
-     this.addToBookUl(book);
-   });
- }
+  heading.textContent = 'All awesome books';
+});
 
- // create li with book properties and insert it to the ul tag
- static addToBookUl(book) {
-   const li = `<li class="list-item" key="${book.id}">
-  <p class="title">"${book.title}" by ${book.author}</p>
-  <button class="removeBtn">Remove</button>
-  </li>`;
-   ul.innerHTML += li;
- }
+// remove other sections when add new is clicked
+addNew.addEventListener('click', () => {
+  // remove list section
+  if (!bookSection.classList.contains('remove-section')) {
+    bookSection.classList.add('remove-section');
+  }
 
- // add book to array and store it in localStorage
- static addBook(book) {
-   // add book to the books array
-   this.books.push(book);
+  // remove contact section
+  if (!contactSection.classList.contains('remove-section')) {
+    contactSection.classList.add('remove-section');
+  }
 
-   // convert the books array to a string
-   const strData = JSON.stringify(this.books);
+  // add form section
+  if (form.classList.contains('remove-section')) {
+    form.classList.remove('remove-section');
+  }
 
-   // store the converted data in the localStorage
-   localStorage.setItem('books', strData);
- }
+  heading.textContent = 'Add a new book';
+});
 
- // remove book from localStorage
- static removeBook(bookID) {
-   // filter out the deleted book and return the ones left
-   const result = this.books.filter((book) => String(bookID) !== String(book.id));
+// remove other sections when contact is clicked
+contactLink.addEventListener('click', () => {
+  // remove list section
+  if (!bookSection.classList.contains('remove-section')) {
+    bookSection.classList.add('remove-section');
+  }
 
-   // convert the result to a string
-   const strData = JSON.stringify(result);
+  // remove form section
+  if (!form.classList.contains('remove-section')) {
+    form.classList.add('remove-section');
+  }
 
-   // store the converted result in the localStorage
-   localStorage.setItem('books', strData);
+  // add contact section
+  if (contactSection.classList.contains('remove-section')) {
+    contactSection.classList.remove('remove-section');
+  }
 
-   // assign the new results to the books array
-   this.books = JSON.parse(localStorage.getItem('books'));
-
-   // check if the books array is not empty
-   if (this.books.length !== 0) {
-     ul.style.display = 'block';
-   } else {
-     ul.style.display = 'none';
-     localStorage.clear();
-   }
- }
-}
+  heading.textContent = 'Contact information';
+});
 
 // Get all books from the localStorage anytime the page loads fully
 document.addEventListener('DOMContentLoaded', Methods.getAllBooks());
@@ -124,9 +92,6 @@ form.addEventListener('submit', (e) => {
   // create book object from Book class and pass the form values to it
   const book = new Book(titleValue, authorValue, Methods.books.length);
 
-  // display the ul tag
-  ul.style.display = 'block';
-
   // add the new book object to the array and store it to the localStorage
   Methods.addBook(book);
 
@@ -135,6 +100,8 @@ form.addEventListener('submit', (e) => {
 
   // clear the form values
   form.reset();
+
+  Methods.displayListOnly();
 });
 
 // remove book when remove button is clicked
@@ -151,3 +118,5 @@ ul.addEventListener('click', (e) => {
     e.target.parentElement.remove();
   }
 });
+
+dateTime.textContent = Methods.getDateFormat();
